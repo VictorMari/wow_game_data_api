@@ -20,30 +20,21 @@ class TokenProvider:
         raise Exception("Save token method not implemented")
 
 
-class Token(Resource):
+class DbTokenProvider(TokenProvider):
     def __init__(self):
         pass
 
-    def validate(self):
-        pass
-
-    def generateNewToken(self):
-        pass
-
-    def getHeaders(self):
-        pass
-
-
-class DbTokenProvider:
+class FsTokenProvider(TokenProvider):
     def __init__(self):
         pass
 
-class FsTokenProvider:
+class BattlenetTokenProvider(TokenProvider):
     def __init__(self):
         pass
 
-class OauthAuthenticator:
+class OauthFlow:
     def __init__(self):
+        # uses token providers 
         pass
 
     def server_oauth_flow(self):
@@ -51,7 +42,9 @@ class OauthAuthenticator:
 
 class GameDataApi:
 
-    def __init__(self):
+    def __init__(self, Token):
+        # token inspance provided in constructor
+
         # create OauthAuthenticator instance
 
         # do a server oauth flow 
