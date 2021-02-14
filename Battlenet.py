@@ -3,10 +3,10 @@ import requests
 
 from dataclasses import dataclass
 from logging import config as logConfig
-import loggerConfig
+from wow_game_data_api.loggerConfig import logger_config
 
 
-logConfig.dictConfig(loggerConfig.logger_config)
+logConfig.dictConfig(logger_config)
 log = logging.getLogger("debug")
 
 
