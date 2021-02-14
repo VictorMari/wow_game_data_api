@@ -180,6 +180,28 @@ class ConnectedRealm(Resource):
             yield url
 
 
+class AuctionHouse(Resource):
+    def __init__(self, realm_id, baseUrl, token):
+        self.baseUrl = baseUrl
+        self.token = token
+        self.ah_path = f"/data/wow/connected-realm/{realm_id}/auctions"
+
+    def get(self, params):
+        reqParams = {
+            "url": f"{self.baseUrl}{self.ah_path}",
+            "params": params,
+            "headers":{
+                "Authorization": f"Bearer {self.token}"
+            },
+            "method": "GET"
+        }
+
+        response = executeRequest(reqParams)
+        return response
+        
+
+
+
 class GameDataApi:
 
     def __init__(self, region, token):
@@ -199,7 +221,8 @@ class GameDataApi:
         raise Exception(" api not implemented")
 
     def auction_house(self, realm_id):
-        raise Exception(" api not implemented")
+        Auction_house_resource = AuctionHouse(realm_id, self.baseUrl, self.token)
+        return Auction_house_resource
 
     def azerite(self):
         raise Exception(" api not implemented")
@@ -299,7 +322,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     tokenRepo = FsTokenProvider("eu", "./data")
-    oauth = OauthBattlenet(tokenRepo, os.getenv("CLIENT"), os.getenv("Secret"))
+    oauth = OauthBattlenet(tokenRepo, os.getenv("CLIENT"), os.getenv("SECRET"))
 
     token = oauth.getAuthorizedToken()
     blizz_client= GameDataApi("eu", token.access_token)
@@ -309,6 +332,7 @@ if __name__ == "__main__":
         "locale": "es_ES"
     }
     #connectedRealms = blizz_client.connected_realms().get(1379, params)
-    connectedRealms_index = blizz_client.connected_realms().index(params=params)
-    for index in connectedRealms_index:
-        print(index)
+    #connectedRealms_index = blizz_client.connected_realms().index(params=params)
+    AuctionHouse = blizz_client.auction_house(1379).get(params)
+    print(AuctionHouse["auctions"][0])
+   
