@@ -20,6 +20,7 @@ def executeRequest(reqData):
         return response
     except Exception as e:
         print(e)
+        print(httpReq.text)
 
 
 class Resource:
@@ -331,7 +332,9 @@ if __name__ == "__main__":
         "locale": "es_ES"
     }
     #connectedRealms = blizz_client.connected_realms().get(1379, params)
-    #connectedRealms_index = blizz_client.connected_realms().index(params=params)
-    AuctionHouse = blizz_client.auction_house(1379).get(params)
-    print(AuctionHouse["auctions"][0])
+    connectedRealms_index = blizz_client.connected_realms().index(params=params)
+    for realm in connectedRealms_index:
+        print(realm)
+    #AuctionHouse = blizz_client.auction_house(1379).get(params)
+    #print(AuctionHouse["auctions"][0])
    

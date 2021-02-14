@@ -3,6 +3,10 @@ MODULE_NAME="wow_game_data_api"
 MODULE_PATH="/home/labosis/Projects/wow_game_data_api"
 REMOTE_URL="git@gitlab.home.com:labosis/wow_game_data_api.git"
 
+git add .
+git commit -m $1
+git push local master
+
 sudo rm -r /tmp/$MODULE_NAME
 mkdir /tmp/$MODULE_NAME
 pushd /tmp/$MODULE_NAME 
