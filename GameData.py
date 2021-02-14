@@ -5,9 +5,21 @@ from logging import config as logConfig
 import loggerConfig
 import logging
 import json
+import requests
 
 logConfig.dictConfig(loggerConfig.logger_config)
 log = logging.getLogger("debug")
+
+
+def executeRequest(reqData):
+    httpReq = requests.request(**reqData)
+    try:
+        httpReq.raise_for_status()
+        log.info(f"{reqData['method']} {reqData['url']}")
+        response = httpReq.json()
+        return response
+    except Exception as e:
+        print(e)
 
 
 class Resource:
@@ -15,10 +27,10 @@ class Resource:
     def __init__(self):
         pass
 
-    def get(self):
+    def get(self, source_id, params):
         raise Exception("Resource get not implemented")
     
-    def index(self):
+    def index(self, params):
         raise Exception("Resource index not implemented")
 
 class TokenProvider:
@@ -97,9 +109,82 @@ class OauthBattlenet:
         # return
 
 
+class Realm(Resource):
+    def __init__(self, baseUrl, token):
+        self.baseUrl = baseUrl
+        self.realm_path = "/data/wow/realm"
+        self.token = token
+
+    def get(self, realmId, params={}):
+        reqParams = {
+            "url": f"{self.baseUrl}{self.realm_path}/{realmId}",
+            "params": params,
+            "headers":{
+                "Authorization": f"Bearer {self.token}"
+            },
+            "method": "GET" 
+        }
+
+        response = executeRequest(reqParams)
+        return response
+
+    def index(self, params={}):
+        reqParams = {
+            "url": f"{self.baseUrl}{self.realm_path}/index",
+            "params": params,
+            "headers":{
+                "Authorization": f"Bearer {self.token}"
+            },
+            "method": "GET" 
+        }
+
+        response = executeRequest(reqParams)
+        realms = response["realms"]
+        for realm in realms:
+            yield realm
+
+class ConnectedRealm(Resource):
+    def __init__(self, baseUrl, token):
+        self.baseUrl = baseUrl
+        self.token = token
+        self.connected_realm_path = "/data/wow/connected-realm"
+        
+    def get(self, connected_realm_id, params={}):
+        reqParams = {
+            "url": f"{self.baseUrl}{self.connected_realm_path}/{connected_realm_id}",
+            "params": params,
+            "headers":{
+                "Authorization": f"Bearer {self.token}"
+            },
+            "method": "GET" 
+        }
+
+        response = executeRequest(reqParams)
+        return response
+
+    def index(self, params={}):
+        reqParams = {
+            "url": f"{self.baseUrl}{self.connected_realm_path}/index",
+            "params": params,
+            "headers":{
+                "Authorization": f"Bearer {self.token}"
+            },
+            "method": "GET"
+        }
+
+        response = executeRequest(reqParams)
+        for url in response["connected_realms"]:
+            baseUrl = url["href"].split("?")[0]
+            index = baseUrl.split("/")[-1]
+            url["id"] = index
+            yield url
+
+
 class GameDataApi:
 
-    def __init__(self, region, Token):
+    def __init__(self, region, token):
+        self.baseUrl = f"https://{region}.api.blizzard.com"
+        self.token = token
         # token inspance provided in constructor
 
         # create OauthAuthenticator instance
@@ -119,8 +204,9 @@ class GameDataApi:
     def azerite(self):
         raise Exception(" api not implemented")
 
-    def connected_realm(self):
-        raise Exception(" api not implemented")
+    def connected_realms(self):
+        connected_realm_resource = ConnectedRealm(self.baseUrl, self.token)
+        return connected_realm_resource
 
     def covenants(self):
         raise Exception(" api not implemented")
@@ -186,7 +272,8 @@ class GameDataApi:
         raise Exception(" api not implemented")
 
     def realms(self):
-        raise Exception(" api not implemented")
+        realm_resource = Realm(self.baseUrl, self.token)
+        return realm_resource
 
     def reputations(self):
         raise Exception(" api not implemented")
@@ -215,4 +302,13 @@ if __name__ == "__main__":
     oauth = OauthBattlenet(tokenRepo, os.getenv("CLIENT"), os.getenv("Secret"))
 
     token = oauth.getAuthorizedToken()
-    print(token)
+    blizz_client= GameDataApi("eu", token.access_token)
+
+    params = {
+        "namespace": "dynamic-eu",
+        "locale": "es_ES"
+    }
+    #connectedRealms = blizz_client.connected_realms().get(1379, params)
+    connectedRealms_index = blizz_client.connected_realms().index(params=params)
+    for index in connectedRealms_index:
+        print(index)
