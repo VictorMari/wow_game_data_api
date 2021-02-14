@@ -1,5 +1,5 @@
-from Battlenet import Battlenet
-from Battlenet import Token
+from wow_game_data_api.Battlenet import Battlenet
+from wow_game_data_api.Battlenet import Token
 from pathlib import Path
 from logging import config as logConfig
 import loggerConfig
@@ -23,7 +23,6 @@ def executeRequest(reqData):
 
 
 class Resource:
-
     def __init__(self):
         pass
 
