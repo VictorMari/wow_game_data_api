@@ -1,13 +1,13 @@
 from wow_game_data_api.Battlenet import Battlenet
 from wow_game_data_api.Battlenet import Token
+from wow_game_data_api.loggerConfig import logger_config
 from pathlib import Path
 from logging import config as logConfig
-import loggerConfig
 import logging
 import json
 import requests
 
-logConfig.dictConfig(loggerConfig.logger_config)
+logConfig.dictConfig(logger_config)
 log = logging.getLogger("debug")
 
 
