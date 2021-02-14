@@ -1,4 +1,7 @@
 import logging
+import requests 
+
+from dataclasses import dataclass
 from logging import config as logConfig
 import loggerConfig
 
@@ -6,19 +9,22 @@ import loggerConfig
 logConfig.dictConfig(loggerConfig.logger_config)
 log = logging.getLogger("debug")
 
-import requests 
 
+def makeRequest(reqData):
+    resource_request = requests.request(**reqData)
+    try:
+        resource_request.raise_for_status()
+        log.info(f"{reqData['method']} {reqData['url']}")
+        return resource_request.json()
+    except Exception as e:
+        print(e)
+
+
+@dataclass
 class Token:
-    def __init__(self):
-        pass
-
-    def validate(self):
-        pass
-
-    def getHeaders(self):
-        pass
-
-
+    access_token: str
+    token_type: str
+    expires_in: int
 
 class BattlenetOauth:
     def __init__(self, region, client_id, secret):
@@ -37,25 +43,36 @@ class BattlenetOauth:
             "files":{
                 "grant_type": (None, "client_credentials")
             },
-            "auth": (self.client, self.secret)
+            "auth": (self.client, self.secret),
+            "method": "POST"
         }
 
-        tokenRequest = requests.post(**reqData)
-
-        try:
-            tokenRequest.raise_for_status()
-            return tokenRequest.json()
-
-        except Exception as e:
-            print(e)
-
+        token_data = makeRequest(reqData)
+        if token_data:
+            return Token(**token_data)
 
     def user_authentication(self):
         raise Exception("Authorization code flow not implemented")
 
 
+    def validate_token(self, token):
+        reqData = {
+            "url": f"{self.baseUrl}{self.token_validation_path}",
+            "data": {
+                ":region": self.region,
+                "token": token.access_token
+            },
+            "method": "POST"
+        }
+
+        token_validation = makeRequest(reqData)
+        if token_validation:
+            return token_validation
+
+        
+
 if __name__ == "__main__":
     client = BattlenetOauth("eu","f0eff582ba304d22881d664aaf0229f2", "7H7xZHOQ6SitwwiSisStcbtKCdxRogCY")
-    token_data = client.application_authentication()
-
-    print(token_data)
+    token= client.application_authentication()
+    valid_token = client.validate_token(token)
+    print(valid_token)
