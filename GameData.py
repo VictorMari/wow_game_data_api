@@ -96,7 +96,7 @@ class OauthBattlenet:
 
         new_token = self.BattlenetClient.application_authentication()
         self.tokenProvider.saveToken(new_token)
-
+        return new_token
         
 
 
