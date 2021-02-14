@@ -1,3 +1,15 @@
+from Battlenet import Battlenet
+from Battlenet import Token
+from pathlib import Path
+from logging import config as logConfig
+import loggerConfig
+import logging
+import json
+
+logConfig.dictConfig(loggerConfig.logger_config)
+log = logging.getLogger("debug")
+
+
 class Resource:
 
     def __init__(self):
@@ -25,24 +37,48 @@ class DbTokenProvider(TokenProvider):
         pass
 
 class FsTokenProvider(TokenProvider):
-    def __init__(self):
-        pass
+    def __init__(self, region, basePath):
+        self.region = region
+        self.basePath = Path(basePath).joinpath(region)
+        
+        if not self.basePath.exists():
+            self.basePath.mkdir(exist_ok=True, parents=True)
+            log.info(f"Created folder {self.basePath}")
 
-class BattlenetTokenProvider(TokenProvider):
-    def __init__(self):
-        pass
+    def retrieveToken(self): # user param to get specific token from user
+        token_path = self.basePath.joinpath("token.json")
+        if token_path.exists():
+            with token_path.open() as token_file:
+                token_json = token_file.read()
+                if not token_json == "":
+                    token_data = json.loads(token_json)
+                    return Token(**token_data)
+    
+    def saveToken(self, token):
+        token_path = self.basePath.joinpath("token.json")
+        token_dict = {
+            "access_token": token.access_token,
+            "token_type": token.token_type,
+            "expires_in": token.expires_in
+        }
+        token_path.touch()
+        with token_path.open("w+") as token_file:
+            token_file.write(json.dumps(token_dict))
 
-class OauthFlow:
-    def __init__(self):
-        # uses token providers 
-        pass
 
-    def server_oauth_flow(self):
-        pass
+class OauthBattlenet:
+    def __init__(self, tokenProvider, client_id, secret):
+        # retrieves token from custom storage of battlenet
+        self.region = tokenProvider.region
+        self.client = client_id
+        self.secret = secret
+        self.BattlenetClient = Battlenet(region, client_id, secret)
+        self.tokenProvider = tokenProvider
+
 
 class GameDataApi:
 
-    def __init__(self, Token):
+    def __init__(self, region, Token):
         # token inspance provided in constructor
 
         # create OauthAuthenticator instance
@@ -149,5 +185,14 @@ class GameDataApi:
 
 
 
+if __name__ == "__main__":
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
 
-
+    b_client = Battlenet("eu", os.getenv("CLIENT"), os.getenv("SECRET"))
+    token = b_client.application_authentication()
+    fs_token = FsTokenProvider("eu", "./data")
+    #fs_token.saveToken(token)
+    token = fs_token.retrieveToken()
+    print(token)

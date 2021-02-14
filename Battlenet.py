@@ -26,7 +26,7 @@ class Token:
     token_type: str
     expires_in: int
 
-class BattlenetOauth:
+class Battlenet:
     def __init__(self, region, client_id, secret):
         self.client = client_id
         self.secret = secret
@@ -70,9 +70,3 @@ class BattlenetOauth:
             return token_validation
 
         
-
-if __name__ == "__main__":
-    client = BattlenetOauth("eu","f0eff582ba304d22881d664aaf0229f2", "7H7xZHOQ6SitwwiSisStcbtKCdxRogCY")
-    token= client.application_authentication()
-    valid_token = client.validate_token(token)
-    print(valid_token)
