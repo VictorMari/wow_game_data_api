@@ -52,6 +52,7 @@ class FsTokenProvider(TokenProvider):
                 token_json = token_file.read()
                 if not token_json == "":
                     token_data = json.loads(token_json)
+                    log.info(f"Retrieved token {token_path}")
                     return Token(**token_data)
     
     def saveToken(self, token):
@@ -64,6 +65,7 @@ class FsTokenProvider(TokenProvider):
         token_path.touch()
         with token_path.open("w+") as token_file:
             token_file.write(json.dumps(token_dict))
+            log.info(f"Saved token to {token_path}")
 
 
 class OauthBattlenet:
@@ -72,8 +74,27 @@ class OauthBattlenet:
         self.region = tokenProvider.region
         self.client = client_id
         self.secret = secret
-        self.BattlenetClient = Battlenet(region, client_id, secret)
+        self.BattlenetClient = Battlenet(self.region, client_id, secret)
         self.tokenProvider = tokenProvider
+
+    def getAuthorizedToken(self):
+        current_token = self.tokenProvider.retrieveToken()
+        token_meta = self.BattlenetClient.validate_token(current_token)
+        if token_meta:
+            return current_token
+
+        new_token = self.BattlenetClient.application_authentication()
+        self.tokenProvider.saveToken(new_token)
+
+        
+
+
+        
+        # pull token from provider
+        # verify token
+        # if not valid create new one
+        # save 
+        # return
 
 
 class GameDataApi:
@@ -190,9 +211,8 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
-    b_client = Battlenet("eu", os.getenv("CLIENT"), os.getenv("SECRET"))
-    token = b_client.application_authentication()
-    fs_token = FsTokenProvider("eu", "./data")
-    #fs_token.saveToken(token)
-    token = fs_token.retrieveToken()
+    tokenRepo = FsTokenProvider("eu", "./data")
+    oauth = OauthBattlenet(tokenRepo, os.getenv("CLIENT"), os.getenv("Secret"))
+
+    token = oauth.getAuthorizedToken()
     print(token)

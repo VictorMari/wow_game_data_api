@@ -56,6 +56,9 @@ class Battlenet:
 
 
     def validate_token(self, token):
+        if token == None:
+            return None
+
         reqData = {
             "url": f"{self.baseUrl}{self.token_validation_path}",
             "data": {
