@@ -91,8 +91,7 @@ class OauthBattlenet:
 
     def getAuthorizedToken(self):
         current_token = self.tokenProvider.retrieveToken()
-        token_meta = self.BattlenetClient.validate_token(current_token)
-        if token_meta:
+        if self.BattlenetClient.validate_token(current_token):
             return current_token
 
         new_token = self.BattlenetClient.application_authentication()
@@ -314,9 +313,7 @@ class GameDataApi:
         raise Exception(" api not implemented")
 
 
-
-
-if __name__ == "__main__":
+def realm_index_test():
     import os
     from dotenv import load_dotenv
     load_dotenv()
@@ -335,6 +332,10 @@ if __name__ == "__main__":
     connectedRealms_index = blizz_client.connected_realms().index(params=params)
     for realm in connectedRealms_index:
         print(realm)
-    #AuctionHouse = blizz_client.auction_house(1379).get(params)
-    #print(AuctionHouse["auctions"][0])
-   
+
+
+
+if __name__ == "__main__":
+    pass
+
+    
