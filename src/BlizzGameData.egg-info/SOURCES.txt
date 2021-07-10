@@ -15,3 +15,5 @@ src/BlizzGameData/api_resources/ConnectedRealm.py
 src/BlizzGameData/api_resources/Realm.py
 src/BlizzGameData/api_resources/Resource.py
 src/BlizzGameData/api_resources/__init__.py
+src/BlizzGameData/oauth_flows/ClientCredentials.py
+src/BlizzGameData/oauth_flows/__init__.py
