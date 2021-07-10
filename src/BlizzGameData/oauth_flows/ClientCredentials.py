@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from src.Battlenet import (
+from Battlenet import (
     Battlenet,
     Token
 )
