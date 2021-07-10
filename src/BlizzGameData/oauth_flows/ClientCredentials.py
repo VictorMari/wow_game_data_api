@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
-from Battlenet import (
+from ..Battlenet import (
     Battlenet,
     Token
 )
+ 
 import logging
 
 log = logging.getLogger("")
@@ -15,7 +16,7 @@ class FsTokenCache:
         self.basePath = Path(basePath).joinpath(region)
 
         if not self.basePath.exists():
-            self.basePath.mkdir(exist_ok=True, parents=True)
+            #self.basePath.mkdir(exist_ok=True, parents=True)
             log.info(f"Created folder {self.basePath}")
 
     def retrieveToken(self):  # user param to get specific token from user
@@ -36,11 +37,12 @@ class FsTokenCache:
             "expires_in": token.expires_in,
             "sub": token.sub
         }
+        """
         token_path.touch()
         with token_path.open("w+") as token_file:
             token_file.write(json.dumps(token_dict))
             log.info(f"Saved token to {token_path}")
-
+        """
 
 class OauthBattlenet:
     def __init__(self, token_cache, client_id, secret):

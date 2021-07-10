@@ -1,6 +1,7 @@
-from api_resources.Resource import Resource
-from api_resources.Resource import execute_request
-
+from .Resource import (
+    Resource,
+    execute_request
+)
 
 class AuctionHouse(Resource):
     def __init__(self, realm_id, baseUrl, token):

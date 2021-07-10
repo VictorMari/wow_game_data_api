@@ -1,6 +1,6 @@
-from api_resources.Realm import Realm
-from api_resources.ConnectedRealm import ConnectedRealm
-from api_resources.AuctionHouse import AuctionHouse
+from .api_resources.Realm import Realm
+from .api_resources.ConnectedRealm import ConnectedRealm
+from .api_resources.AuctionHouse import AuctionHouse
 import logging
 
 log = logging.getLogger("")
@@ -109,7 +109,7 @@ class GameDataApi:
 
 
 def realm_index_test():
-    from oauth_flows.ClientCredentials import (
+    from .oauth_flows.ClientCredentials import (
         FsTokenCache,
         OauthBattlenet
     )
