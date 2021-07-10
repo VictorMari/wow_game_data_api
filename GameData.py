@@ -1,3 +1,5 @@
+import json
+
 from api_resources.Realm import Realm
 from api_resources.ConnectedRealm import ConnectedRealm
 from api_resources.AuctionHouse import AuctionHouse
@@ -129,8 +131,8 @@ def realm_index_test():
         "locale": "es_ES"
     }
     connectedRealms_index = blizz_client.connected_realms().index(params=params)
-    for realm in connectedRealms_index:
-        print(realm)
+    rand_id = list(connectedRealms_index)[0]["id"]
+    ah = blizz_client.auction_house(rand_id).get(params=params)
 
 
 if __name__ == "__main__":
