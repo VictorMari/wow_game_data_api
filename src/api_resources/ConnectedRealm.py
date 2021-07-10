@@ -1,5 +1,5 @@
-from api_resources.Resource import Resource
-from api_resources.Resource import execute_request
+from src.api_resources.Resource import Resource
+from src.api_resources.Resource import execute_request
 
 
 class ConnectedRealm(Resource):

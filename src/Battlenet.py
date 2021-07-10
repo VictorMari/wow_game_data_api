@@ -45,7 +45,6 @@ class Battlenet:
         }
 
         token_data = makeRequest(reqData)
-        print(token_data)
         if token_data:
             return Token(**token_data)
 
