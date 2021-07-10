@@ -7,7 +7,6 @@ log = logging.getLogger("")
 
 
 class GameDataApi:
-
     def __init__(self, region, token):
         self.baseUrl = f"https://{region}.api.blizzard.com"
         self.token = token
