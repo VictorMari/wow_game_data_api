@@ -108,29 +108,5 @@ class GameDataApi:
         raise Exception(" api not implemented")
 
 
-def realm_index_test():
-    from .oauth_flows.ClientCredentials import (
-        FsTokenCache,
-        OauthBattlenet
-    )
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
-
-    tokenRepo = FsTokenCache("eu", "./data")
-    oauth = OauthBattlenet(tokenRepo, os.getenv("CLIENT"), os.getenv("SECRET"))
-
-    token = oauth.get_authorized_token()
-    blizz_client = GameDataApi("eu", token.access_token)
-
-    params = {
-        "namespace": "dynamic-eu",
-        "locale": "es_ES"
-    }
-    connectedRealms_index = blizz_client.connected_realms().index(params=params)
-    rand_id = list(connectedRealms_index)[0]["id"]
-    ah = blizz_client.auction_house(rand_id).get(params=params)
-
-
 if __name__ == "__main__":
-    realm_index_test()
+    pass

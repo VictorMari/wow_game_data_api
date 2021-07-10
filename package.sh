@@ -1,4 +1,4 @@
 python -m pip install --upgrade pip build twine
 rm dist/*
 python -m build
-python -m twine upload --skip-existing --repository testpypi dist/*
+python -m twine upload --non-interactive --repository testpypi dist/*
