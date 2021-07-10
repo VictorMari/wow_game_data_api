@@ -1,3 +1,4 @@
+from logging import config as logConfig
 logger_config = { 
     'version': 1,
     'disable_existing_loggers': True,
@@ -28,12 +29,4 @@ logger_config = {
         }
     } 
 }
-
-"""
-'fileLogger': {
-                'level': 'INFO',
-                'formatter': 'standard',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': './Confluence/logs/output.log'
-            }
-"""
+logConfig.dictConfig(logger_config)

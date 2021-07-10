@@ -1,12 +1,7 @@
 import logging
-import requests 
-
+import requests
 from dataclasses import dataclass
-from logging import config as logConfig
-from wow_game_data_api.loggerConfig import logger_config
 
-
-logConfig.dictConfig(logger_config)
 log = logging.getLogger("debug")
 
 
@@ -25,6 +20,8 @@ class Token:
     access_token: str
     token_type: str
     expires_in: int
+    sub: str
+
 
 class Battlenet:
     def __init__(self, region, client_id, secret):
@@ -33,14 +30,14 @@ class Battlenet:
         self.region = region
         self.baseUrl = f"https://{region}.battle.net"
 
-        #paths
+        # paths
         self.token_path = "/oauth/token"
         self.token_validation_path = "/oauth/check_token"
 
     def application_authentication(self):
         reqData = {
             "url": f"{self.baseUrl}{self.token_path}",
-            "files":{
+            "files": {
                 "grant_type": (None, "client_credentials")
             },
             "auth": (self.client, self.secret),
@@ -48,12 +45,12 @@ class Battlenet:
         }
 
         token_data = makeRequest(reqData)
+        print(token_data)
         if token_data:
             return Token(**token_data)
 
     def user_authentication(self):
         raise Exception("Authorization code flow not implemented")
-
 
     def validate_token(self, token):
         if token == None:
@@ -71,5 +68,3 @@ class Battlenet:
         token_validation = makeRequest(reqData)
         if token_validation:
             return token_validation
-
-        
