@@ -11,14 +11,6 @@ class GameDataApi:
     def __init__(self, region, token):
         self.baseUrl = f"https://{region}.api.blizzard.com"
         self.token = token
-        # token inspance provided in constructor
-
-        # create OauthAuthenticator instance
-
-        # do a server oauth flow 
-
-        # set the returned token as an instance field
-        pass
 
     def achivements(self):
         raise Exception(" api not implemented")
