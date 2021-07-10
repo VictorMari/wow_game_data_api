@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/BlizzGameData/Battlenet.py
+src/BlizzGameData/GameData.py
+src/BlizzGameData/__init__.py
+src/BlizzGameData/loggerConfig.py
+src/BlizzGameData.egg-info/PKG-INFO
+src/BlizzGameData.egg-info/SOURCES.txt
+src/BlizzGameData.egg-info/dependency_links.txt
+src/BlizzGameData.egg-info/top_level.txt
